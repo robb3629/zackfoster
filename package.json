@@ -1,0 +1,20 @@
+{
+  "name": "zackfoster",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "robb3629",
+  "type": "commonjs",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "node ."
+  },
+  "dependencies": {
+    "discord.js": "^14.18.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
