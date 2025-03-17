@@ -10,7 +10,7 @@ const MAX_HISTORY_LENGTH = 15
 export async function zackPost(message: Message) {
     try {
         const groq = new Groq({ apiKey: groq_api })
-        const contextId = message.channel.id
+        const contextId = message.author.id
 
         if (!messageHistory.has(contextId)) {
             messageHistory.set(contextId, [
