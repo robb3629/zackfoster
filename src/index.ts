@@ -1,6 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { token, client_id } from "./config.json";
-import { commands } from "./commands";
+import { token } from "./config.json";
 import { deployCommands } from "./misc/deploy-commands";
 import { EventHandler } from "./handlers/eventsHandler";
 

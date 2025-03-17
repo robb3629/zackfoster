@@ -1,4 +1,6 @@
 import { Client, Events } from 'discord.js';
+import Groq from 'groq-sdk'
+import { groq_api } from '../config.json'
 
 export default {
     name: Events.ClientReady,
