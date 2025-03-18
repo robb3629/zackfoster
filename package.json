@@ -13,10 +13,12 @@
     "build": "tsup src/index.ts --minify"
   },
   "dependencies": {
+    "better-sqlite3": "^11.9.1",
     "discord.js": "^14.18.0",
     "groq-sdk": "^0.16.0"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
     "tsup": "^8.4.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"

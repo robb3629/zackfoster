@@ -3,6 +3,7 @@ import Groq from 'groq-sdk'
 import { groq_api } from "../config.json";
 import { zackPersonality } from "../misc/zackPersonality";
 import { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
+import { zackInLove } from "../misc/zackPersonalityInLove";
 
 const messageHistory = new Map<string, Array<ChatCompletionMessageParam>>()
 const MAX_HISTORY_LENGTH = 15
@@ -13,9 +14,15 @@ export async function zackPost(message: Message) {
         const contextId = message.author.id
 
         if (!messageHistory.has(contextId)) {
-            messageHistory.set(contextId, [
-                {role: "system", content: zackPersonality} as ChatCompletionMessageParam
-            ])
+            if(contextId === `1347229382007066694` || contextId === `631567724555927583`) {
+                messageHistory.set(contextId, [
+                    {role: "system", content: zackInLove} as ChatCompletionMessageParam
+                ])
+            } else {
+                messageHistory.set(contextId, [
+                    {role: "system", content: zackPersonality} as ChatCompletionMessageParam
+                ])
+            }
         }
 
         const currentHistory = messageHistory.get(contextId)!
