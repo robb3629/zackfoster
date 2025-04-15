@@ -14,7 +14,7 @@ const client = new Client({
 
 client.on("guildCreate", async (guild) => {
     await deployCommands({ guildId: guild.id });
-    console.log(guild.id)
+    console.log(`The bot has been added to the server `)
 });
 
 const eventHandler = new EventHandler(client)

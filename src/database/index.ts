@@ -1,10 +1,14 @@
 import Database from "better-sqlite3";
 import type { Database as DatabaseType } from "better-sqlite3";
 
-// Create/connect to database with busyTimeout to handle locks
+// Create/connect to database with explicit timeout settings to handle locks
 const db: DatabaseType = new Database("database.sqlite", {
     verbose: console.log,
+    timeout: 5000, // 5 second timeout for busy state
 });
+
+// Enable WAL mode for better concurrency
+db.pragma('journal_mode = WAL');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS servers (
@@ -14,11 +18,21 @@ db.exec(`
   )
 `);
 
-function setChannel(zackChannel: string, love: string) {
-    const stmt = db.prepare(
-        "INSERT INTO users (zackChannel, love) VALUES (?, ?)"
-    );
-    return stmt.run(zackChannel, love);
+async function addChannel(zackChannel: string, serverId: string) {
+    try {
+        // Simpler approach using a single UPSERT statement
+        const stmt = db.prepare(`
+            INSERT INTO servers (serverId, zackChannel)
+            VALUES (?, ?)
+            ON CONFLICT(serverId) 
+            DO UPDATE SET zackChannel = ?
+        `);
+        
+        return stmt.run(serverId, zackChannel, zackChannel);
+    } catch (error) {
+        console.error(`Error updating channel for server ${serverId}:`, error);
+        throw error;
+    }
 }
 
 function addServer(serverId: string, love: string) {
@@ -45,19 +59,22 @@ function getServerId(serverId: string) {
     }
 }
 
-function getChannels() {
+function getChannels(serverId: string) {
     try {
         const stmt = db.prepare(
-            "SELECT DISTINCT zackChannel FROM servers WHERE zackChannel IS NOT NULL"
+            "SELECT zackChannel FROM servers WHERE serverId = ?"
         );
-        return stmt.all().map((row) => row.zackChannel);
+        const result = stmt.get(serverId) as { zackChannel: string | null } | undefined;
+        return result ? result.zackChannel : null;
     } catch (error) {
-        console.error("Error getting channels:", error);
-        return [];
+        console.error(`Error getting channels for server ${serverId}:`, error);
+        return null;
     }
 }
 
-// Close database when done
-// db.close();
+// Add a function to properly close the database when needed
+function closeDatabase() {
+    db.close();
+}
 
-export { db, addUser, getServerId, getChannels, addServer };
+export { db, addChannel, getServerId, getChannels, addServer, closeDatabase };

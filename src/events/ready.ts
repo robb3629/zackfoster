@@ -1,10 +1,11 @@
 import { Client, Events } from "discord.js";
 import { addServer, getServerId } from "../database";
+import { deployCommands } from "../misc/deploy-commands";
 
 export default {
     name: Events.ClientReady,
     once: true,
-    execute(client: Client) {
+    async execute(client: Client) {
         console.log("Discord bot is ready! 🤖");
         console.log(`Bot is in ${client.guilds.cache.size} servers:`);
 
@@ -13,6 +14,7 @@ export default {
             try {
                 console.log(`- ${guild.name} (ID: ${guild.id})`);
                 const foundId = getServerId(guild.id);
+                await deployCommands({ guildId: guild.id})
                 if (!foundId) {
                     addServer(guild.id, guild.ownerId);
                 }

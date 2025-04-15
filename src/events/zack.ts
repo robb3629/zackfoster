@@ -1,4 +1,4 @@
-import { Client, Events, Message } from "discord.js";
+import { Client, Events, Message, MessageFlags, User } from "discord.js";
 import { zackPost } from "../oreo/zackPost";
 import { getChannels } from "../database";
 
@@ -7,12 +7,25 @@ export default {
     once: false,
     async execute(client: Client, message: Message) {
 
-        const data = getChannels()
-        console.log(data)
+        if (message.author.id === client.user.id) return
+
         
-        if (message.author.id !== client.user.id && message.channel.id === '1350574944055984299' || message.guild.id === '1216125718191149096' && message.author.id !== client.user.id) {
-            const zackResponse = await zackPost(message)
-            message.reply(zackResponse)
+        if (message.guild.id === '1350574944055984299') {
+            // Use message.reply instead of interaction.reply
+            await message.author.send({
+                content: "You need to set a channel where I can speak",
+            }).catch(console.error);
+            if (message.author.id !== message.guild.ownerId) {
+                const owner = await message.guild.fetchOwner()
+                await owner.send({
+                    content: "You need to set a channel where I can speak",
+                })
+            }
+            return;
         }
-    },
+        
+        const zackResponse = await zackPost(message)
+        message.reply(zackResponse)
+        return
+    }
 };
